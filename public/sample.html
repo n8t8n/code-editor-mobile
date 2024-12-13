@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Purr-fect Cats</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+    <style>
+        .hero-background {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar is-primary">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#">
+                <strong>Purr-fect Cats</strong>
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-end">
+                <a href="#" class="navbar-item">Home</a>
+                <a href="#" class="navbar-item">Breeds</a>
+                <a href="#" class="navbar-item">Gallery</a>
+                <a href="#" class="navbar-item">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero hero-background is-medium">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title is-1">Discover the World of Cats</h1>
+                <h2 class="subtitle is-3">Adorable, Elegant, Mysterious</h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- Information Cards -->
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+                    <div class="card">
+                        <div class="card-content">
+                            <p class="title">Cat Breeds</p>
+                            <p>Explore various fascinating cat breeds from around the world.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="card">
+                        <div class="card-content">
+                            <p class="title">Cat Care</p>
+                            <p>Learn the best ways to care for your feline friends.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="card">
+                        <div class="card-content">
+                            <p class="title">Cat Behavior</p>
+                            <p>Understand the unique behaviors of our mysterious companions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal on Load -->
+    <div id="welcomeModal" class="modal is-active">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <h2 class="title is-4">Welcome to Purr-fect Cats!</h2>
+                <p>Discover the magical world of our feline friends.</p>
+                <button class="button is-primary mt-3" onclick="document.getElementById('welcomeModal').classList.remove('is-active')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>© 2024 Purr-fect Cats. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

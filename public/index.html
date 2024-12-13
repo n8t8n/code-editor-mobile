@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es-us">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jonathan A. - Free Code Previewer | @n8t8n</title>
+  <meta name="description"
+    content="Load code from URLs easily ,Free online code editor for web development, Instant code previews and support for Bootstrap, Bulma, and Tailwind.">
+  <meta name="keywords"
+    content="code editor, online code editor, code snippets, live preview, load code from URL, web development, developer tools, coding, programming, html, css, javascript">
+  <meta name="author" content="Jonathan A.">
+  <meta name="canonical" content="https://n8t8n.uno/codeeditor">
+  <meta name="og:image" content="https://n8t8n.uno/1731029584866.png">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://n8t8n.uno/codeeditor">
+  <meta property="og:title" content="Jonathan A. - Free Code Previewer | @n8t8n">
+  <meta property="og:description"
+    content="Load code from URLs easily ,Free online code editor for web development, Instant code previews and support for Bootstrap, Bulma, and Tailwind.">
+  <meta property="og:image" content="https://n8t8n.uno/images/code-editor-preview.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://n8t8n.uno/codeeditor">
+  <meta property="twitter:title" content="Jonathan A. - Code Previewer | @n8t8n">
+  <meta property="twitter:description"
+    content="Load code from URLs easily ,Free online code editor for web development, Instant code previews and support for Bootstrap, Bulma, and Tailwind.">
+  <meta name="twitter:image" content="https://n8t8n.uno/1731029584866.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="manifest" href="https://n8t8n.uno/resources/pwa/manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192"
+    href="https://n8t8n.uno/resources/pwa/favicon/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512"
+    href="https://n8t8n.uno/resources/pwa/favicon/android-chrome-512x512.png">
+  <link rel="icon" type="image/x-icon" href="https://n8t8n.uno/resources/pwa/favicon/favicon.ico">
+  <link rel="sitemap" type="application/xml" href="https://n8t8n.uno/sitemap.xml">
+  <!-- Schema.org for Product -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Free Code Previewer",
+      "description": "Load code from URLs easily ,Free online code editor for web development, Instant code previews and support for Bootstrap, Bulma, and Tailwind.",
+      "url": "https://n8t8n.uno/codeeditor",
+      "image": "https://n8t8n.uno/resources/pwa/favicon/android-chrome-512x512.png",
+      "operatingSystem": "Web-based",
+      "applicationCategory": "Development",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+44 121 823 0386",
+        "contactType": "customer service"
+      }
+    }
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-noconflict/ace.js' crossorigin='anonymous'></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+
+<body>
+
+  <div id="app">
+    <div id="toolbar">
+      <button id="frameworkButton" class="n8t8n-dropdown-menu" ref="frameworkButton">N8T8N</button>
+      <div class="grouped-buttons">
+        <button class="switch-framework" @click="toggleWrap">Wrap Code</button>
+        <button @click="toggleFontSize">Font X2</button>
+        <button @click="openConfigModal">⋯</button>
+      </div>
+    </div>
+    <div id="main">
+      <div id="editor" ref="editor"></div>
+      <div id="resizer" @mousedown="startResize" @touchstart="startResize"></div>
+      <div id="preview" ref="preview"></div>
+    </div>
+    <div id="footer">
+      <span>&copy; 2024 Jonathan A.</span>
+      <a href="https://github.com/n8t8n" target="_blank">@n8t8n</a>
+    </div>
+
+    <!-- Configuration Modal -->
+    <div v-if="showConfigModal" class="modal-overlay" @click.self="closeConfigModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Configuration</h2>
+          <button class="modal-close" @click="closeConfigModal">&times;</button>
+        </div>
+        <div class="config-container">
+          <div class="config-checkboxes">
+            <label class="toggle-switch">
+              <input type="radio" v-model="activeFramework" value="bootstrap" @change="updateFrameworkText">
+              <span class="slider"></span>
+              <span class="toggle-label">Bootstrap</span>
+            </label>
+            <label class="toggle-switch">
+              <input type="radio" v-model="activeFramework" value="bulma" @change="updateFrameworkText">
+              <span class="slider"></span>
+              <span class="toggle-label">Bulma</span>
+            </label>
+            <label class="toggle-switch">
+              <input type="radio" v-model="activeFramework" value="disabled" @change="updateFrameworkText">
+              <span class="slider"></span>
+              <span class="toggle-label">Disabled</span>
+            </label>
+            <label class="toggle-switch">
+              <input type="checkbox" @click="loadSampleCode">
+              <span class="slider"></span>
+              <span class="toggle-label">Load SPA in seconds</span>
+            </label>
+          </div>
+          <div class="github-container">
+            <label class="toggle-switch">
+              <input type="checkbox" v-model="showUrlInput">
+              <span class="slider"></span>
+              <span class="toggle-label">Add CSS/JS URLs</span>
+            </label>
+            <div class="external-src-container" v-if="showUrlInput">
+              <div v-for="(pair, index) in urlPairs" :key="index" class="url-pair">
+                <input type="text" v-model="pair.cssUrl" placeholder="CSS URL" @input="updateAddedUrls" />
+                <input type="text" v-model="pair.jsUrl" placeholder="JS URL" @input="updateAddedUrls" />
+              </div>
+              <div class="external-button-src-container">
+                <button class="add-src-button" @click="addUrlPair">
+                  <span>+</span>
+                </button>
+                <button class="remove-src-button" @click="removeUrlPair(index)">
+                  <span>-</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
+  <script src="app.js" type="module"></script>
+
+  <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+      import('./app.js').then(({default: appMethods}) => {
+        const app = Vue.createApp({
+          data() {
+            return {
+              editor: null,
+              isResizing: false,
+              initialX: null,
+              initialY: null,
+              editorWidth: 50,
+              editorHeight: 50,
+              previewHeight: 50,
+              showConfigModal: false,
+              activeFramework: 'disabled',
+              bootstrapLinks: {
+                css: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+                js: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js',
+                pop: 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js',
+                framework: 'Bootstrap',
+                snippet: 'json/bootstrap.json'
+              },
+              bulmaLinks: {
+                css: 'https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css',
+                pop: '',
+                js: '',
+                framework: 'Bulma',
+                snippet: 'json/bulma.json'
+              },
+              // code new
+              showUrlInput: false,
+              urlPairs: [{cssUrl: '', jsUrl: ''}],
+              addedUrls: [],
+            };
+          },
+
+          mounted() {
+            this.initEditor();
+            this.addEventListeners();
+            this.handleWindowResize();
+          },
+
+          beforeUnmount() {
+            this.removeEventListeners();
+          },
+
+          methods: {
+            // **Editor Methods**
+            initEditor() {
+              try {
+                this.editor = ace.edit('editor');
+                this.editor.setTheme('ace/theme/dracula');
+                this.editor.session.setMode('ace/mode/html');
+                this.editor.setOptions({
+                  enableBasicAutocompletion: true,
+                  enableLiveAutocompletion: true,
+                  enableSnippets: true,
+                  tabSize: 2,
+                  showPrintMargin: false,
+                  wrap: this.wrapEnabled,
+                  fontSize: this.fontSize
+                });
+                this.editor.on('change', this.updatePreview);
+              } catch (error) {
+                console.error('Error initializing editor:', error);
+              }
+            },
+
+            // **Preview Methods**
+            ...appMethods,
+
+          }
+        }).mount('#app');
+      });
+    });
+  </script>
+</body>
+
+</html>
